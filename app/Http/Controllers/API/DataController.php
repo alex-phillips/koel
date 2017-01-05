@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Application;
+use App\Models\Genre;
 use App\Models\Interaction;
 use App\Models\Playlist;
 use App\Models\Setting;
@@ -34,6 +35,7 @@ class DataController extends Controller
 
         return response()->json(MediaCache::get() + [
             'settings' => $request->user()->is_admin ? Setting::pluck('value', 'key')->all() : [],
+            'genres' => Genre::orderBy('name')->get()->toArray(),
             'playlists' => $playlists,
             'interactions' => Interaction::byCurrentUser()->get(),
             'users' => $request->user()->is_admin ? User::all() : [],
