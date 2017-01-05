@@ -179,7 +179,7 @@ export default {
      * @return {boolean}
      */
     hasSameYear () {
-        return every(this.songs, song => song.album.year === this.songs[0].album.year)
+      return every(this.songs, song => song.album.year === this.songs[0].album.year)
     },
 
     /**
@@ -188,7 +188,7 @@ export default {
      * @return {boolean}
      */
     onSameDisc () {
-        return every(this.songs, song => song.disc === this.songs[0].disc)
+      return every(this.songs, song => song.disc === this.songs[0].disc)
     },
 
     /**
@@ -197,7 +197,7 @@ export default {
      * @return {boolean}
      */
     isSameGenre () {
-        return every(this.songs, song => song.genre === this.songs[0].genre)
+      return every(this.songs, song => song.genre === this.songs[0].genre)
     },
 
     /**
