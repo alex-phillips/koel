@@ -254,7 +254,7 @@ class Media
         Artist::deleteWhereIDsNotIn(array_filter($inUseArtists));
 
         $inUseGenres = Song::select('genre_id')->groupBy('genre_id')->get()->pluck('genre_id')->toArray();
-        $inUseGenres[] Genre::UNKNOWN_ID;
+        $inUseGenres[] = Genre::UNKNOWN_ID;
         Genre::deleteWhereIDsNotIn($inUseGenres);
     }
 }
