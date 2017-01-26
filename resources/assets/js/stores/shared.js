@@ -2,18 +2,20 @@ import { assign } from 'lodash'
 import isMobile from 'ismobilejs'
 
 import { http } from '../services'
-import { userStore, preferenceStore, artistStore, albumStore, songStore, playlistStore, queueStore, settingStore } from '.'
+import { userStore, preferenceStore, artistStore, albumStore, songStore, playlistStore, queueStore, settingStore, genreStore } from '.'
 
 export const sharedStore = {
   state: {
     songs: [],
     albums: [],
     artists: [],
+    genres: [],
     favorites: [],
     queued: [],
     interactions: [],
     users: [],
     settings: [],
+    songsSelection: [],
     currentUser: null,
     playlists: [],
     useLastfm: false,
@@ -46,6 +48,7 @@ export const sharedStore = {
         artistStore.init(this.state.artists)
         albumStore.init(this.state.albums)
         songStore.init(this.state.songs)
+        genreStore.init(this.state.genres) // Must be done before initializing songs.
         songStore.initInteractions(this.state.interactions)
         playlistStore.init(this.state.playlists)
         queueStore.init()

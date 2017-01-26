@@ -6,8 +6,8 @@ import data from '../blobs/data'
 const artists = data.artists
 
 describe('stores/artist', () => {
-  beforeEach(() => artistStore.init(cloneDeep(artists)))
-  afterEach(() => artistStore.state.artists = [])
+  beforeEach(() => { genreStore.init(cloneDeep(genres)); artistStore.init(cloneDeep(artists)) })
+  afterEach(() => { genreStore.state.genres = []; artistStore.state.artists = [] })
 
   describe('#init', () => {
     it('correctly gathers artists', () => {

@@ -5,7 +5,7 @@ import isMobile from 'ismobilejs'
 
 import { secondsToHis, alerts, pluralize } from '../utils'
 import { http, ls } from '../services'
-import { sharedStore, favoriteStore, albumStore, artistStore, preferenceStore } from '.'
+import { sharedStore, favoriteStore, albumStore, artistStore, preferenceStore, genreStore } from '.'
 import stub from '../stubs/song'
 
 export const songStore = {
@@ -61,6 +61,12 @@ export const songStore = {
     // into its artist as well
     if (album.is_compilation) {
       artist.albums = unionBy(artist.albums, [album], 'id')
+    }
+
+    if (song.genre_id) {
+      var genre = genreStore.byId(song.genre_id);
+      Vue.set(song, 'genre', genre);
+      genre.songs.push(song);
     }
 
     // Cache the song, so that byId() is faster
@@ -233,8 +239,73 @@ export const songStore = {
         each(artists, artist => !artistStore.byId(artist.id) && artistStore.add(artist))
         each(albums, album => !albumStore.byId(album.id) && albumStore.add(album))
 
+<<<<<<< HEAD
         each(songs, song => {
           const originalSong = this.byId(song.id)
+=======
+  /**
+   * Sync an updated song into our current library.
+   *
+   * This is one of the most ugly functions I've written, if not the worst itself.
+   * Sorry, future me.
+   * Sorry guys.
+   * Forgive me.
+   *
+   * @param  {Object} updatedSong The updated song, with albums and whatnot.
+   *
+   * @return {?Object}       The updated song.
+   */
+  syncUpdatedSong (updatedSong) {
+    // Cases:
+    // 1. Album doesn't change (and then, artist doesn't either)
+    // 2. Album changes (note that a new album might have been created) and
+    //    2.a. Artist remains the same.
+    //    2.b. Artist changes as well. Note that an artist might have been created.
+
+    // Find the original song,
+    const originalSong = this.byId(updatedSong.id)
+
+    if (!originalSong) {
+      return
+    }
+
+    // and keep track of original album/artist.
+    const originalAlbumId = originalSong.album.id
+    const originalArtistId = originalSong.artist.id
+    const originalGenreId = originalSong.genre.id
+
+    // First, we update the title, lyrics, and track #
+    originalSong.title = updatedSong.title
+    originalSong.lyrics = updatedSong.lyrics
+    originalSong.track = updatedSong.track
+    originalSong.disc = updatedSong.disc
+
+    if (updatedSong.genre.id !== originalGenreId) {
+      // Store the new genre in the store
+      genreStore.addSongsIntoGenre(updatedSong.genre, originalSong)
+      genreStore.add(updatedSong.genre)
+    }
+
+    if (updatedSong.album.id === originalAlbumId) { // case 1
+      // Nothing to do
+    } else { // case 2
+      // First, remove it from its old album
+      albumStore.removeSongsFromAlbum(originalSong.album, originalSong)
+
+      const existingAlbum = albumStore.byId(updatedSong.album.id)
+      const newAlbumCreated = !existingAlbum
+
+      if (!newAlbumCreated) {
+        // The song changed to an existing album. We now add it to such album.
+        albumStore.addSongsIntoAlbum(existingAlbum, originalSong)
+      } else {
+        // A new album was created. We:
+        // - Add the new album into our collection
+        // - Add the song into it
+        albumStore.addSongsIntoAlbum(updatedSong.album, originalSong)
+        albumStore.add(updatedSong.album)
+      }
+>>>>>>> more changes cleanup - removed folders references
 
           if (originalSong.album_id !== song.album_id) {
             // album has been changed. Remove the song from its old album.

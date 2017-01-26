@@ -1,13 +1,14 @@
 require('chai').should()
 import { cloneDeep, last } from 'lodash'
 
-import { songStore, albumStore, artistStore, preferenceStore } from '../../stores'
+import { songStore, albumStore, artistStore, preferenceStore, genreStore } from '../../stores'
 import data from '../blobs/data'
 
 const { songs, artists, albums, interactions } = data
 
 describe('stores/song', () => {
   beforeEach(() => {
+    genreStore.init(cloneDeep(genres))
     artistStore.init(artists)
     albumStore.init(albums)
     songStore.init(songs)
